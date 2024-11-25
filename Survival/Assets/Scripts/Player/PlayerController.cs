@@ -19,11 +19,11 @@ public class PlayerController : MonoBehaviour
     private Vector2 mouseDelta;
 
     //components
-    private Rigidbody rigidbody;
+    private Rigidbody rig;
 
     private void Awake()
     {
-        rigidbody = GetComponent<Rigidbody>();
+        rig = GetComponent<Rigidbody>();
     }
 
     private void FixedUpdate()
@@ -45,9 +45,9 @@ public class PlayerController : MonoBehaviour
     {
         Vector3 direction = transform.forward * currentMovementInput.y + transform.right * currentMovementInput.x;
         direction *= moveSpeed;
-        direction.y = rigidbody.linearVelocity.y;
+        direction.y = rig.linearVelocity.y;
 
-        rigidbody.linearVelocity = direction;
+        rig.linearVelocity = direction;
     }
 
     //looking around with camera
@@ -86,7 +86,7 @@ public class PlayerController : MonoBehaviour
         {
             if (isGrounded())
             {
-                rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+                rig.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
             }
         }
     }
