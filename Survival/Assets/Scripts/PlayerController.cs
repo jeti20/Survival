@@ -6,6 +6,9 @@ public class PlayerController : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float moveSpeed;
     private Vector2 currentMovementInput;
+    [SerializeField] private float jumpForce;
+    [SerializeField] private LayerMask groundLayerMask;
+    
 
     [Header("Look")]
     public Transform cameraContainer;
@@ -74,5 +77,46 @@ public class PlayerController : MonoBehaviour
             currentMovementInput = Vector2.zero;
         }
             { }
+    }
+
+    //jumping - space - input system
+    public void OnJumpInput (InputAction.CallbackContext context)
+    {
+        if (context.phase == InputActionPhase.Started)
+        {
+            if (isGrounded())
+            {
+                rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+            }
+        }
+    }
+
+    bool isGrounded()
+    {
+        Ray[] rays = new Ray[4]
+        {
+            new Ray(transform.position + (transform.forward * 0.2f) + (Vector3.up * 0.01f), Vector3.down), //(Vector3.up * 0.01f) move rays a little up so they do not bugg
+            new Ray(transform.position + (-transform.forward * 0.2f) + (Vector3.up * 0.01f), Vector3.down),
+            new Ray(transform.position + (transform.right * 0.2f) + (Vector3.up * 0.01f), Vector3.down),
+            new Ray(transform.position + (-transform.right * 0.2f) + (Vector3.up * 0.01f), Vector3.down),
+        };
+
+        for (int i = 0; i < rays.Length; i++)
+        {
+            if (Physics.Raycast(rays[i], 0.1f, groundLayerMask))
+            {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.red;
+        Gizmos.DrawRay(transform.position + (transform.forward * 0.2f), Vector3.down);
+        Gizmos.DrawRay(transform.position + (-transform.forward * 0.2f), Vector3.down);
+        Gizmos.DrawRay(transform.position + (transform.right * 0.2f), Vector3.down);
+        Gizmos.DrawRay(transform.position + (-transform.right * 0.2f), Vector3.down);
     }
 }
